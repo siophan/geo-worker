@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  launchd 保活模板:崩溃自动重启、开机自启。
+  约定:所有 worker 机部署在 ~/Documents/geo-worker(下面按用户名 mac 写死;
+  用户名不同的机器把 /Users/mac 改成实际家目录)。
+  使用:
+    1. 确认下面的绝对路径与本机一致,填好 GEO_COLLECTOR_TOKEN。
+    2. cp com.zhixiang.collector.plist ~/Library/LaunchAgents/
+    3. launchctl load ~/Library/LaunchAgents/com.zhixiang.collector.plist
+    4. 查看日志:tail -f ~/Documents/geo-worker/worker.log
+  注意:
+  - CDP 挂真 Chrome 需要登录用户的图形会话,故用 LaunchAgent(用户级),勿用 LaunchDaemon;
+    那个带 --remote-debugging-port=9222 的真 Chrome 也要随会话常驻(登录项/另一个 LaunchAgent)。
+  - GEO_SERVER_URL 已在代码里默认写死生产地址 https://www.eleai.cc,无需在此配置。
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.zhixiang.collector</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/mac/Documents/geo-worker/.venv/bin/python</string>
+        <string>/Users/mac/Documents/geo-worker/collector_worker.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/mac/Documents/geo-worker</string>
+
+    <!-- 用 EnvironmentVariables 注入配置;或在脚本里加载 .env -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>GEO_COLLECTOR_TOKEN</key>
+        <string>replace-with-shared-secret</string>
+        <key>GEO_WORKER_CAPABILITIES</key>
+        <string>deepseek</string>
+        <key>GEO_WORKER_CDP_URL</key>
+        <string>http://127.0.0.1:9222</string>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/mac/Documents/geo-worker/worker.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/mac/Documents/geo-worker/worker.err.log</string>
+</dict>
+</plist>

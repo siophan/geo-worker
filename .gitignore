@@ -1,0 +1,9 @@
+# 本机文件,严禁入库:.env 含共享密钥,worker_id 是机器身份,*_state.json 是登录态
+.env
+worker_id
+*_state.json
+.venv/
+__pycache__/
+*.pyc
+worker.log
+.DS_Store

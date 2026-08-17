@@ -1,0 +1,5 @@
+# 下限放宽以兼容老 Mac 的旧 Python(3.8/3.9 无法安装新版 playwright):
+# pip 会按本机 Python 自动解析到最高兼容版本。worker 只用 sync_playwright +
+# connect_over_cdp 两个早期就稳定的 API,旧版 playwright 完全够用。
+playwright>=1.40
+httpx>=0.27
