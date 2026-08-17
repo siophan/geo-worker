@@ -69,12 +69,22 @@ cp .env.example .env      # 按注释填写;或直接 export 这些环境变量
 > 缺 CDP 地址、或把 `cdp_url` 写成数字(JSON 漏引号,如 `{"cdp_url":9222}`),worker 启动即
 > 明确报错退出,不会带病起跑。
 
-## 四、跑起来
+## 四、跑起来(一键启动)
 
 ```bash
-# 前台试跑(先确认能注册、领到任务)
+./start.sh        # 前台启动:自动装依赖、拉起 CDP Chrome、跑 worker(Ctrl+C 只停 worker)
+./start.sh -d     # 后台启动,日志追加到 worker.log
+./start.sh stop   # 停止后台 worker(不动 Chrome)
+```
+
+脚本会自动:venv 不存在就创建并装依赖 → 端口上没有 CDP Chrome 就按第二节的参数拉起
+(已在跑则复用)→ 启动 worker。新 profile 首次拉起后,记得在那个 Chrome 里手动登录各引擎。
+
+手动前台试跑(等价于脚本最后一步):
+
+```bash
 set -a && source .env && set +a
-python collector_worker.py
+.venv/bin/python collector_worker.py
 ```
 
 后台保活(开机自启 + 崩溃重启)用 launchd:
